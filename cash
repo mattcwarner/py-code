@@ -1,0 +1,32 @@
+from cs50 import get_float
+
+# use an indefinite loop to ask the user how much money
+while True:
+    owed = get_float("How much change is owed? ")
+    # if the user inputs a positive integer, break from loop
+    if owed > 0:
+        break
+
+# store dictionary with value of coins
+denominations = {
+    "quarters": "0.25",
+    "dimes": "0.1",
+    "nickels": "0.05",
+    "pennies": "0.01"}
+
+# initialise counter as 0
+coins_total = 0
+
+# for loop that loops through coin types
+for key in denominations:
+    # initialise value of coin in loop using get
+    value = float(denominations.get(key))
+    # print values, mostly for troubleshooting
+    print(f"key: {key}, value: {value}, owed: {owed}")
+    # as long as money owed < value of coin, - value of coin from money owed, counter++
+    while owed >= value:
+        owed = round((owed - value), 2)
+        coins_total += 1
+    print(f"coins: {coins_total}")
+
+print(f"{coins_total}")
