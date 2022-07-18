@@ -1,0 +1,43 @@
+# define main program, what will happen when you call main
+def main():
+
+    h = get_height()
+    pyramid(h)
+
+
+# what happens when you call get height
+def get_height():
+    # until you break
+    while True:
+        # try to get an int, avoids using cs50's library
+        try:
+            # ask the user for input
+            n = int(input("Let's build a pyramid, how high? "))
+            # if it's not in the range you want print a suggestion
+            if n < 1 or n > 8:
+                print("Let's keep it between 1 and 8!")
+            # if it is in that range then break from loop
+            else:
+                break
+        # if the user doesnt input the type we asked for (int) then print a suggestion
+        except ValueError:
+            print("Try a number...")
+        # keep looping until break
+    # once an acceptable value has been entered, send it to main
+    return n
+
+
+# what to do when pyramid is called
+def pyramid(h):
+    # loop as many times as value of h
+    # adjust counter so that i starts at 1
+    for i in range(1, h + 1):
+        # make hashes as many # as the line printing
+        hashes = ("#" * (i))
+        # when you concatenate with commas it adds a space
+        # print whitespace, hashes, whitespace and hashes
+        print(" " * (h - (i)) + hashes + "  " + hashes)
+
+
+# call main
+main()
