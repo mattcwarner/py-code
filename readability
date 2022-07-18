@@ -1,0 +1,36 @@
+from cs50 import get_string
+
+# text from user
+input = get_string("Text: ")
+
+# define punctuation that we will use to end sentences
+punct = ["!", ".", "?"]
+
+# initialise variable letters and sentences to 0
+letters = 0
+sentences = 0
+
+# words can be counted by len while splitting the string by the default seperator(whitespace)
+words = len(input.split())
+
+# a loop can iterate over chars and count letters and punctuation and add to the relative counter
+for c in input:
+    if c.isalpha():
+        letters += 1
+    elif c in punct:
+        sentences += 1
+
+# we work out how many letters and sentences per 100 words with maths
+L = letters * 100 / words
+S = sentences * 100 / words
+
+# use the coleman liau formula to work out score, rounded to whole number
+c_l = round(0.0588 * L - 0.296 * S - 15.8)
+
+# make sure edge cases are taken care of and print grade
+if c_l < 1:
+    print("Before Grade 1")
+elif c_l > 16:
+    print("Grade 16+")
+else:
+    print(f"Grade {c_l}")
