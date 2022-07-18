@@ -1,0 +1,84 @@
+# Simulate a sports tournament
+
+import csv
+import sys
+import random
+
+# Number of simluations to run
+N = 1000
+
+
+def main():
+
+    # Ensure correct usage
+    if len(sys.argv) != 2:
+        sys.exit("Usage: python tournament.py FILENAME")
+
+    # mine
+    teams = []
+    # create filename variable from command line argument
+    to_open = sys.argv[1]
+    # use with to open and save it as variable called 'ready'
+    with open(to_open) as ready:
+        # use csv library to read the file
+        reader = csv.DictReader(ready)
+        # loop to go through csv list one comma separated value called 'team' at a time
+        for team in reader:
+            # convert the string of rating to an int
+            team["rating"] = int(team["rating"])
+            # add the strings/values attached to 'team' to an entry in our dict called 'teams'
+            teams.append(team)
+
+    # mine
+    counts = {}
+    # simulate N tournaments and keep track of win counts
+    for i in range(N):
+        # create variable that stores winner of the tournament function, pass it the 'teams' list
+        victor = simulate_tournament(teams)
+        # if the team stored in 'victor' is on the counts list, add to its value by 1
+        if victor in counts:
+            counts[victor] += 1
+        # if not then add to the list and initialise it with a value of 1
+        else:
+            counts[victor] = 1
+
+    # Print each team's chances of winning, according to simulation
+    for team in sorted(counts, key=lambda team: counts[team], reverse=True):
+        print(f"{team}: {counts[team] * 100 / N:.1f}% chance of winning")
+
+
+def simulate_game(team1, team2):
+    """Simulate a game. Return True if team1 wins, False otherwise."""
+    rating1 = team1["rating"]
+    rating2 = team2["rating"]
+    probability = 1 / (1 + 10 ** ((rating2 - rating1) / 600))
+    return random.random() < probability
+
+
+def simulate_round(teams):
+    """Simulate a round. Return a list of winning teams."""
+    winners = []
+
+    # Simulate games for all pairs of teams
+    for i in range(0, len(teams), 2):
+        if simulate_game(teams[i], teams[i + 1]):
+            winners.append(teams[i])
+        else:
+            winners.append(teams[i + 1])
+
+    return winners
+
+# mine
+def simulate_tournament(teams):
+    """Simulate a tournament. Return name of winning team."""
+    # while loop for as long as there is more than one team on the list
+    while len(teams) > 1:
+        # the list is updated to the winner of the round
+        teams = simulate_round(teams)
+    # return value stored in "team" for the the first (only) entry on the teams list
+    return teams[0]["team"]
+
+
+if __name__ == "__main__":
+    main()
+  
