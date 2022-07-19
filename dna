@@ -1,0 +1,118 @@
+import csv
+import sys
+
+
+def main():
+
+    # Check for command-line usage, if not 3, exit with error message
+    if len(sys.argv) != 3:
+        sys.exit("wrong command line usage")
+    # create pathways to use command line arguments for input
+    db = sys.argv[1]
+    sq = sys.argv[2]
+
+    # Read database file into a variable
+    # use with to open and close csv file, use a csv tool for a reader, read into a list called database
+    with open(db) as file:
+        reader = csv.DictReader(file)
+        database = list(reader)
+
+    # Read DNA sequence file into a variable
+    # use with open again, read txt file into a variable
+    with open(sq) as sample:
+        sequence = sample.read()
+        # print(f"{sequence}")
+
+    # Find longest match of each STR in DNA sequence
+    # iniitalise dict to contain STRs and their frequency in the sample sequence
+    STR_count = []
+    # for each STR listed in database,
+    # copy it into a variable called STR,
+    # call longest match function and
+    # create an entry in the STR count dictionary
+    # with the return value from the sample sequence
+    for i in range(1, len(reader.fieldnames)):
+        STR = reader.fieldnames[i]
+        STR_count.append(longest_match(sequence, STR))
+        # print(STR, end =", ")
+    # print(list(STR_count))
+
+    # Check database for matching profiles
+    # create empty dict to hold suspects
+    suspects = []
+    # counter for how many suspects have been cleared
+    not_guilty = 0
+    # for each person listed in database
+    for i in range(len(database)):
+        # reference for how many str matches between sample and suspect
+        ref = 0
+        # get the persons name from the database and store in suspect
+        suspect = (database[i][reader.fieldnames[0]])
+        # print(suspect, end=": ")
+        suspects.append(suspect)
+        # for each str type in database
+        for j in range(1, len(reader.fieldnames)):
+            # get the suspects str count
+            suspect_str = int(database[i][reader.fieldnames[j]])
+            # print(suspect_str, end=": ")
+            # get the samples str count
+            sample_str = int(STR_count[j-1])
+            # print(sample_str)
+            # if the str matches add one to reference counter
+            if sample_str == suspect_str:
+                ref += 1
+            # if the reference counter has as many matches as there are
+            # str types in database then print match and name of suspect
+        if ref == len(STR_count):
+            print(suspect)
+            break
+        # otherwise cross another suspect off the list
+        else:
+            not_guilty += 1
+
+    # if there are as many not guilty as there are people in the database then print not guilty
+    if not_guilty == len(suspects):
+        print("No match")
+
+    return
+
+
+def longest_match(sequence, subsequence):
+    """Returns length of longest run of subsequence in sequence."""
+
+    # Initialize variables
+    longest_run = 0
+    subsequence_length = len(subsequence)
+    sequence_length = len(sequence)
+
+    # Check each character in sequence for most consecutive runs of subsequence
+    for i in range(sequence_length):
+
+        # Initialize count of consecutive runs
+        count = 0
+
+        # Check for a subsequence match in a "substring" (a subset of characters) within sequence
+        # If a match, move substring to next potential match in sequence
+        # Continue moving substring and checking for matches until out of consecutive matches
+        while True:
+
+            # Adjust substring start and end
+            start = i + count * subsequence_length
+            end = start + subsequence_length
+
+            # If there is a match in the substring
+            if sequence[start:end] == subsequence:
+                count += 1
+
+            # If there is no match in the substring
+            else:
+                break
+
+        # Update most consecutive matches found
+        longest_run = max(longest_run, count)
+
+    # After checking for runs at each character in seqeuence, return longest run found
+    return longest_run
+
+
+main()
